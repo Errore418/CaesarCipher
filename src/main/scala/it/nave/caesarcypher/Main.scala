@@ -21,6 +21,7 @@ package it.nave.caesarcypher
 
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, Behavior}
+import it.nave.caesarcypher.Guardian.{CaesarMessage, LinkCharActor}
 
 import scala.io.StdIn
 
@@ -33,39 +34,48 @@ object Main extends App {
     .foreach(println(_))
 }
 
+object Guardian {
+
+  trait CaesarMessage
+
+  final case class LinkCharActor(nextActorChar: ActorRef[CaesarMessage]) extends CaesarMessage
+
+  def apply(): Behavior[CaesarMessage] =
+    Behaviors.setup { context =>
+      ???
+    }
+
+}
+
 object Character {
 
-  sealed trait Message {
-    val shift: Int
-    val index: Int
-
-    abstract def decrement(): Message
+  final case class CharShift(shift: Int, index: Int) extends CaesarMessage {
+    def decrement: CharShift = CharShift(shift - 1, index)
   }
 
-  final case class Crypt(shift: Int, index: Int) extends Message {
-    override def decrement() = Crypt(shift - 1, index)
-  }
-
-  final case class Decrypt(shift: Int, index: Int) extends Message {
-    override def decrement() = Decrypt(shift - 1, index)
-  }
-
-  def apply(char: Char, nextChar: ActorRef[Message], previousChar: ActorRef[Message]): Behavior[Message] = {
+  def apply(char: Char, nextActorChar: ActorRef[CaesarMessage]): Behavior[CaesarMessage] = {
     Behaviors.receive { (context, message) =>
+      context.log.info("Actor of char {}: received message {}", char, message)
       message match {
-        case crypt: Crypt =>
-          context.log.info("Actor of char {}: received crypt message {}", char, crypt)
-          handleMessage(crypt, nextChar)
-        case decrypt: Decrypt =>
-          context.log.info("Actor of char {}: received decrypt message {}", char, decrypt)
-          handleMessage(decrypt, previousChar)
+        case charShift: CharShift if (charShift.shift > 0) => nextActorChar ! charShift.decrement
+        case charShift: CharShift if (charShift.shift == 0) => ??? // TODO Implementare raccolta e stampa dei caratteri finali
+        case unknown => context.log.error("Received unknown message {}", unknown)
       }
       Behaviors.same
     }
   }
 
-  private def handleMessage(message: Message, replyTo: ActorRef[Message]): Unit = {
-    if (message.shift > 0) replyTo ! message.decrement else println("TODO Implementare raccolta e stampa dei caratteri finali") // TODO
+  def apply(char: Char): Behavior[CaesarMessage] = {
+    Behaviors.receive { (context, message) =>
+      message match {
+        case LinkCharActor(nextActorChar) =>
+          context.log.info("Actor of char {}: received a link message to the actor {}", char, nextActorChar)
+          Character(char, nextActorChar)
+        case unknown =>
+          context.log.error("Received unknown message {}", unknown)
+          Behaviors.stopped
+      }
+    }
   }
 
 }
