@@ -21,58 +21,66 @@ package it.nave.caesarcypher
 
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, Behavior}
-import it.nave.caesarcypher.Guardian.{CaesarMessage, LinkCharActor}
 
 import scala.io.StdIn
 
 object Main extends App {
-  print("Inserisci una stringa da criptare: ")
-  StdIn
-    .readLine()
-    .view
-    .zipWithIndex
-    .foreach(println(_))
+
+  val ENCRYPT_CHOICE = "1"
+  val DECRYPT_CHOICE = "2"
+
+  println("############## WELCOME TO CAESER CIPHER AKKA BASED ##############")
+  print(s"Press ($ENCRYPT_CHOICE) to encrypt or ($DECRYPT_CHOICE) to decrypt: ")
+  val response = StdIn.readLine()
+  if (ENCRYPT_CHOICE == response || DECRYPT_CHOICE == response) {
+    print("Insert a string to elaborate: ")
+    val str = StdIn.readLine()
+    println(s"String scelta : $str") // TODO Avviare elaborazione
+  } else {
+    println(s""" "${response}" is not a valid choice """.trim) // https://stackoverflow.com/questions/21086263/how-to-insert-double-quotes-into-string-with-interpolation-in-scala
+  }
 }
 
 object Guardian {
 
-  trait CaesarMessage
+  trait Command
 
-  final case class LinkCharActor(nextActorChar: ActorRef[CaesarMessage]) extends CaesarMessage
-
-  def apply(): Behavior[CaesarMessage] =
+  def apply(): Behavior[Command] =
     Behaviors.setup { context =>
-      ???
+      ??? // TODO Configurazione dell'ambiente
     }
 
 }
 
-object Character {
+object CharActor {
 
-  final case class CharShift(shift: Int, index: Int) extends CaesarMessage {
+  trait CharMessage
+
+  final case class CharShift(shift: Int, index: Int) extends CharMessage {
     def decrement: CharShift = CharShift(shift - 1, index)
   }
 
-  def apply(char: Char, nextActorChar: ActorRef[CaesarMessage]): Behavior[CaesarMessage] = {
+  final case class LinkCharActor(nextActorChar: ActorRef[CharMessage]) extends CharMessage
+
+  def apply(char: Char, nextActorChar: ActorRef[CharMessage]): Behavior[CharMessage] = {
     Behaviors.receive { (context, message) =>
       context.log.info("Actor of char {}: received message {}", char, message)
       message match {
         case charShift: CharShift if (charShift.shift > 0) => nextActorChar ! charShift.decrement
         case charShift: CharShift if (charShift.shift == 0) => ??? // TODO Implementare raccolta e stampa dei caratteri finali
-        case unknown => context.log.error("Received unknown message {}", unknown)
+        case _ => context.log.error("Received unknown message")
       }
       Behaviors.same
     }
   }
 
-  def apply(char: Char): Behavior[CaesarMessage] = {
+  def apply(char: Char): Behavior[CharMessage] = {
     Behaviors.receive { (context, message) =>
+      context.log.info("Actor of char {}: received message {}", char, message)
       message match {
-        case LinkCharActor(nextActorChar) =>
-          context.log.info("Actor of char {}: received a link message to the actor {}", char, nextActorChar)
-          Character(char, nextActorChar)
-        case unknown =>
-          context.log.error("Received unknown message {}", unknown)
+        case LinkCharActor(nextActorChar) => CharActor(char, nextActorChar)
+        case _ =>
+          context.log.error("Received unknown message")
           Behaviors.stopped
       }
     }
