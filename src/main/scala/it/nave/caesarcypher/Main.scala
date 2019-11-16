@@ -19,7 +19,7 @@
 
 package it.nave.caesarcypher
 
-import akka.actor.typed.scaladsl.Behaviors
+import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, Behavior}
 
 import scala.io.StdIn
@@ -56,9 +56,7 @@ object CharActor {
 
   trait CharMessage
 
-  final case class CharShift(shift: Int, index: Int) extends CharMessage {
-    def decrement: CharShift = CharShift(shift - 1, index)
-  }
+  final case class CharShift(shift: Int, index: Int) extends CharMessage
 
   final case class LinkCharActor(nextActorChar: ActorRef[CharMessage]) extends CharMessage
 
@@ -66,9 +64,9 @@ object CharActor {
     Behaviors.receive { (context, message) =>
       context.log.info("Actor of char {}: received message {}", char, message)
       message match {
-        case charShift: CharShift if (charShift.shift > 0) => nextActorChar ! charShift.decrement
-        case charShift: CharShift if (charShift.shift == 0) => ??? // TODO Implementare raccolta e stampa dei caratteri finali
-        case _ => context.log.error("Received unknown message")
+        case CharShift(shift, index) if (shift > 0) => nextActorChar ! CharShift(shift - 1, index)
+        case CharShift(shift, _) if (shift == 0) => ??? // TODO Implementare raccolta e stampa dei caratteri finali
+        case _ => return logErrorAndStop(context)
       }
       Behaviors.same
     }
@@ -79,11 +77,14 @@ object CharActor {
       context.log.info("Actor of char {}: received message {}", char, message)
       message match {
         case LinkCharActor(nextActorChar) => CharActor(char, nextActorChar)
-        case _ =>
-          context.log.error("Received unknown message")
-          Behaviors.stopped
+        case _ => logErrorAndStop(context)
       }
     }
+  }
+
+  private def logErrorAndStop(context: ActorContext[CharMessage]): Behavior[CharMessage] = {
+    context.log.error("Received unknown message")
+    Behaviors.stopped
   }
 
 }
