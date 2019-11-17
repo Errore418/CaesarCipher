@@ -20,7 +20,9 @@
 package it.nave.caesarcypher
 
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
-import akka.actor.typed.{ActorRef, Behavior}
+import akka.actor.typed.{ActorRef, ActorSystem, Behavior}
+import it.nave.caesarcypher.CharActor.LinkCharActor
+import it.nave.caesarcypher.Guardian.InputString
 
 import scala.io.StdIn
 
@@ -35,7 +37,7 @@ object Main extends App {
   if (ENCRYPT_CHOICE == response || DECRYPT_CHOICE == response) {
     print("Insert a string to elaborate: ")
     val str = StdIn.readLine()
-    println(s"String scelta : $str") // TODO Avviare elaborazione
+    ActorSystem(Guardian(ENCRYPT_CHOICE == response), "GuardianActor") ! InputString(str)
   } else {
     println(s""" "${response}" is not a valid choice """.trim) // https://stackoverflow.com/questions/21086263/how-to-insert-double-quotes-into-string-with-interpolation-in-scala
   }
@@ -43,11 +45,31 @@ object Main extends App {
 
 object Guardian {
 
+  private val ALPHABETS = List("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", "0123456789")
+  private val SHIFT = 3
+
   trait Command
 
-  def apply(): Behavior[Command] =
+  final case class InputString(str: String) extends Command
+
+  def apply(encrypt: Boolean): Behavior[Command] =
     Behaviors.setup { context =>
-      ??? // TODO Configurazione dell'ambiente
+      context.log.info(s"Guardian actor started in ${if (encrypt) "encrypt" else "decrypt"} mode")
+      for (alphabet <- ALPHABETS) {
+        context.log.info(s"Setting up alphabet $alphabet")
+        val charActors = (if (encrypt) alphabet else alphabet.reverse)
+          .map(char => context.spawn(CharActor(char), s"CharActor-$char"))
+          .toList
+        charActors
+          .zipWithIndex
+          .foreach(tuple => tuple._1 ! LinkCharActor(charActors((tuple._2 + SHIFT) % alphabet.length)))
+      }
+      Behaviors.receiveMessage {
+        case InputString(str) =>
+          context.log.info("Received string \"{}\"", str)
+          // TODO Spezzare la stringa in caratteri ed avviare l'elaborazione
+          Behaviors.stopped
+      }
     }
 
 }
