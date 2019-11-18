@@ -21,7 +21,7 @@ package it.nave.caesarcypher
 
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, ActorSystem, Behavior}
-import it.nave.caesarcypher.CharActor.LinkCharActor
+import it.nave.caesarcypher.CharActor.{CharMessage, CharShift, LinkCharActor}
 import it.nave.caesarcypher.Guardian.InputString
 
 import scala.io.StdIn
@@ -48,6 +48,8 @@ object Guardian {
   private val ALPHABETS = List("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", "0123456789")
   private val SHIFT = 3
 
+  private val x = Map.empty[Char, ActorRef[CharMessage]] // TODO Popolare la mappa
+
   trait Command
 
   final case class InputString(str: String) extends Command
@@ -67,8 +69,10 @@ object Guardian {
       Behaviors.receiveMessage {
         case InputString(str) =>
           context.log.info("Received string \"{}\"", str)
-          // TODO Spezzare la stringa in caratteri ed avviare l'elaborazione
-          Behaviors.stopped
+          str
+            .zipWithIndex
+            .foreach(tuple => x(tuple._1) ! CharShift(SHIFT, tuple._2))
+          Behaviors.same
       }
     }
 
