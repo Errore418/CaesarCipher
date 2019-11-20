@@ -21,7 +21,7 @@ package it.nave.caesarcypher
 
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, ActorSystem, Behavior}
-import it.nave.caesarcypher.CharActor.{CharMessage, CharShift, LinkCharActor}
+import it.nave.caesarcypher.CharActor.{CharShift, LinkCharActor}
 import it.nave.caesarcypher.Guardian.InputString
 
 import scala.io.StdIn
@@ -31,12 +31,9 @@ object Main extends App {
   val ENCRYPT_CHOICE = "1"
   val DECRYPT_CHOICE = "2"
 
-  println("############## WELCOME TO CAESER CIPHER AKKA BASED ##############")
-  print(s"Press ($ENCRYPT_CHOICE) to encrypt or ($DECRYPT_CHOICE) to decrypt: ")
-  val response = StdIn.readLine()
+  val response = StdIn.readLine(s"############## WELCOME TO CAESER CIPHER AKKA BASED ##############\nPress ($ENCRYPT_CHOICE) to encrypt or ($DECRYPT_CHOICE) to decrypt: ")
   if (ENCRYPT_CHOICE == response || DECRYPT_CHOICE == response) {
-    print("Insert a string to elaborate: ")
-    val str = StdIn.readLine()
+    val str = StdIn.readLine("Insert a string to elaborate: ")
     ActorSystem(Guardian(ENCRYPT_CHOICE == response), "GuardianActor") ! InputString(str)
   } else {
     println(s""" "${response}" is not a valid choice """.trim) // https://stackoverflow.com/questions/21086263/how-to-insert-double-quotes-into-string-with-interpolation-in-scala
@@ -48,33 +45,37 @@ object Guardian {
   private val ALPHABETS = List("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", "0123456789")
   private val SHIFT = 3
 
-  private val x = Map.empty[Char, ActorRef[CharMessage]] // TODO Popolare la mappa
-
   trait Command
 
   final case class InputString(str: String) extends Command
 
-  def apply(encrypt: Boolean): Behavior[Command] =
-    Behaviors.setup { context =>
-      context.log.info(s"Guardian actor started in ${if (encrypt) "encrypt" else "decrypt"} mode")
-      for (alphabet <- ALPHABETS) {
-        context.log.info(s"Setting up alphabet $alphabet")
-        val charActors = (if (encrypt) alphabet else alphabet.reverse)
-          .map(char => context.spawn(CharActor(char), s"CharActor-$char"))
-          .toList
-        charActors
-          .zipWithIndex
-          .foreach(tuple => tuple._1 ! LinkCharActor(charActors((tuple._2 + SHIFT) % alphabet.length)))
-      }
-      Behaviors.receiveMessage {
-        case InputString(str) =>
-          context.log.info("Received string \"{}\"", str)
-          str
-            .zipWithIndex
-            .foreach(tuple => x(tuple._1) ! CharShift(SHIFT, tuple._2))
-          Behaviors.same
-      }
+  def apply(encrypt: Boolean): Behavior[Command] = Behaviors.setup { context =>
+    context.log.info(s"Guardian actor started in ${if (encrypt) "encrypt" else "decrypt"} mode")
+    context.log.info(s"Setting up alphabets $ALPHABETS")
+    val CHAR_ACTORS = ALPHABETS
+      .flatten
+      .map(char => char -> context.spawn(CharActor(char), s"CharActor-$char"))
+      .toMap
+    context.log.debug("MAP OF CHAR ACTORS: {}", CHAR_ACTORS)
+    for (entry <- CHAR_ACTORS) {
+      ALPHABETS
+        .find(_.contains(entry._1))
+        .map(s => if (encrypt) s else s.reverse)
+        .map(s => s -> s.indexOf(entry._1))
+        .filter(_._2 != -1)
+        .map(tuple => tuple copy (_2 = (tuple._2 + 1) % tuple._1.length))
+        .map(tuple => tuple._1.charAt(tuple._2))
+        .foreach(c => entry._2 ! LinkCharActor(CHAR_ACTORS(c)))
     }
+    Behaviors.receiveMessage {
+      case InputString(str) =>
+        context.log.info("Received string \"{}\"", str)
+        str
+          .zipWithIndex
+          .foreach(tuple => CHAR_ACTORS(tuple._1) ! CharShift(SHIFT, tuple._2))
+        Behaviors.same
+    }
+  }
 
 }
 
