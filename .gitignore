@@ -109,3 +109,6 @@ project/plugins/project/
 *.log
 
 # End of https://www.gitignore.io/api/sbt,scala,intellij
+
+LibreOffice
+doc/*lock*
