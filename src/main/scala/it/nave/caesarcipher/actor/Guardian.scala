@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Claudio Nave
+ * Copyright (C) 2019 2020 Claudio Nave
  *
  * This file is part of CaesarCipher.
  *
