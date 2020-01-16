@@ -21,6 +21,6 @@ package it.nave.caesarcipher.gui
 
 class PrintlnDisplayer extends OutputDisplayer {
   override def display(output: String): Unit = {
-    println(output)
+    println(s"Output string: $output")
   }
 }

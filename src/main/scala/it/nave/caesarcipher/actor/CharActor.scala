@@ -31,20 +31,20 @@ object CharActor {
 
   final case class LinkCharActor(nextActorChar: ActorRef[CharMessage], replyTo: ActorRef[GuardianMessage]) extends CharMessage
 
-  def apply(char: Char, nextActorChar: ActorRef[CharMessage], replyTo: ActorRef[GuardianMessage]): Behavior[CharMessage] = Behaviors.receive { (context, message) =>
+  def apply(char: Char): Behavior[CharMessage] = Behaviors.receive { (context, message) =>
+    context.log.debug("Actor of char {}: received message {}", char, message)
+    message match {
+      case LinkCharActor(nextActorChar, replyTo) => CharActor(char, nextActorChar, replyTo)
+    }
+  }
+
+  private def apply(char: Char, nextActorChar: ActorRef[CharMessage], replyTo: ActorRef[GuardianMessage]): Behavior[CharMessage] = Behaviors.receive { (context, message) =>
     context.log.debug("Actor of char {}: received message {}", char, message)
     message match {
       case CharShift(shift, index) if shift > 0 => nextActorChar ! CharShift(shift - 1, index)
       case CharShift(shift, index) if shift == 0 => replyTo ! ResultChar(char, index)
     }
     Behaviors.same
-  }
-
-  def apply(char: Char): Behavior[CharMessage] = Behaviors.receive { (context, message) =>
-    context.log.debug("Actor of char {}: received message {}", char, message)
-    message match {
-      case LinkCharActor(nextActorChar, replyTo) => CharActor(char, nextActorChar, replyTo)
-    }
   }
 
 }
