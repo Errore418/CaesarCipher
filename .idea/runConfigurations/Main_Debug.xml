@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Main_Debug" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="it.nave.caesarcipher.Main" />
+    <module name="CaesarCipher" />
+    <option name="VM_PARAMETERS" value="-Dorg.slf4j.simpleLogger.defaultLogLevel=debug" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="it.nave.caesarcipher.actor.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
