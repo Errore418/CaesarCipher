@@ -22,6 +22,7 @@ package it.nave.caesarcipher
 import akka.actor.typed.ActorSystem
 import it.nave.caesarcipher.actor.Guardian
 import it.nave.caesarcipher.actor.Guardian.InputString
+import it.nave.caesarcipher.gui.PrintlnDisplayer
 
 import scala.io.StdIn
 
@@ -33,7 +34,7 @@ object Main extends App {
   val response = StdIn.readLine(s"############## WELCOME TO CAESER CIPHER AKKA BASED ##############\nPress ($ENCRYPT_CHOICE) to encrypt or ($DECRYPT_CHOICE) to decrypt: ")
   if (ENCRYPT_CHOICE == response || DECRYPT_CHOICE == response) {
     val inputStr = StdIn.readLine("Insert a string to elaborate: ")
-    ActorSystem(Guardian(ENCRYPT_CHOICE == response), "GuardianActor") ! InputString(inputStr)
+    ActorSystem(Guardian(ENCRYPT_CHOICE == response, new PrintlnDisplayer), "GuardianActor") ! InputString(inputStr)
   } else {
     println(s""" "$response" is not a valid choice """.trim)
   }
