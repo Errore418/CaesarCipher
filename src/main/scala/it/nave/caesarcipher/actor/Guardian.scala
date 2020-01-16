@@ -63,7 +63,7 @@ object Guardian {
   }
 
   def apply(count: Int, listOfChars: List[(Int, Char)]): Behavior[GuardianMessage] = Behaviors.receive { (context, message) =>
-    context.log.info("Guardian actor: received message {}", message)
+    context.log.debug("Guardian actor: received message {}", message)
     context.log.debug("Map of chars: {}", listOfChars)
     context.log.debug("Count: {}", count)
     message match {
