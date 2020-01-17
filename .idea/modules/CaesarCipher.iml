@@ -8,17 +8,48 @@
       <sourceFolder url="file://$MODULE_DIR$/../../src/main/scala" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../../target/scala-2.13/src_managed/main" isTestSource="false" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/../../target/scala-2.13/src_managed/test" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/../../src/main/resources" type="java-resource" />
       <excludeFolder url="file://$MODULE_DIR$/../../target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="sbt: org.scala-lang:scala-library:2.13.1:jar" level="project" />
-    <orderEntry type="library" name="sbt: org.slf4j:slf4j-api:1.7.29:jar" level="project" />
-    <orderEntry type="library" name="sbt: org.scala-lang.modules:scala-java8-compat_2.13:0.9.0:jar" level="project" />
-    <orderEntry type="library" name="sbt: com.typesafe.akka:akka-slf4j_2.13:2.6.0:jar" level="project" />
-    <orderEntry type="library" name="sbt: com.typesafe.akka:akka-actor_2.13:2.6.0:jar" level="project" />
-    <orderEntry type="library" name="sbt: com.typesafe.akka:akka-actor-typed_2.13:2.6.0:jar" level="project" />
-    <orderEntry type="library" name="sbt: com.typesafe:config:1.4.0:jar" level="project" />
+    <orderEntry type="module-library">
+      <library name="sbt: unmanaged-sources-and-docs">
+        <CLASSES />
+        <JAVADOC>
+          <root url="jar://$USER_HOME$/.cache/coursier/v1/https/repo1.maven.org/maven2/org/openjfx/javafx-fxml/12.0.2/javafx-fxml-12.0.2-javadoc.jar!/" />
+          <root url="jar://$USER_HOME$/.cache/coursier/v1/https/repo1.maven.org/maven2/org/openjfx/javafx-swing/12.0.2/javafx-swing-12.0.2-javadoc.jar!/" />
+          <root url="jar://$USER_HOME$/.cache/coursier/v1/https/repo1.maven.org/maven2/org/openjfx/javafx-web/12.0.2/javafx-web-12.0.2-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.cache/coursier/v1/https/repo1.maven.org/maven2/org/openjfx/javafx-fxml/12.0.2/javafx-fxml-12.0.2-sources.jar!/" />
+          <root url="jar://$USER_HOME$/.cache/coursier/v1/https/repo1.maven.org/maven2/org/openjfx/javafx-swing/12.0.2/javafx-swing-12.0.2-sources.jar!/" />
+          <root url="jar://$USER_HOME$/.cache/coursier/v1/https/repo1.maven.org/maven2/org/openjfx/javafx-web/12.0.2/javafx-web-12.0.2-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="sbt: org.scalafx:scalafx_2.13:12.0.2-R18:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.scala-lang:scala-reflect:2.13.1:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.openjfx:javafx-web:12.0.2:linux:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.openjfx:javafx-swing:12.0.2:linux:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.openjfx:javafx-media:12.0.2:linux:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.openjfx:javafx-media:12.0.2:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.openjfx:javafx-graphics:12.0.2:linux:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.openjfx:javafx-graphics:12.0.2:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.openjfx:javafx-fxml:12.0.2:linux:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.openjfx:javafx-controls:12.0.2:linux:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.openjfx:javafx-controls:12.0.2:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.openjfx:javafx-base:12.0.2:linux:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.openjfx:javafx-base:12.0.2:jar" level="project" />
     <orderEntry type="library" name="sbt: org.slf4j:slf4j-simple:1.7.29:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.typesafe:config:1.4.0:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.typesafe.akka:akka-actor-typed_2.13:2.6.0:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.typesafe.akka:akka-actor_2.13:2.6.0:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.typesafe.akka:akka-slf4j_2.13:2.6.0:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.scala-lang.modules:scala-java8-compat_2.13:0.9.0:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.slf4j:slf4j-api:1.7.29:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.scalafx:scalafxml-core-macros-sfx8_2.13:0.5:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.scalafx:scalafxml-core-sfx8_2.13:0.5:jar" level="project" />
   </component>
 </module>

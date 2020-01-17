@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Main_Error" type="Application" factoryName="Application">
-    <option name="MAIN_CLASS_NAME" value="it.nave.caesarcipher.Main" />
+    <option name="MAIN_CLASS_NAME" value="it.nave.caesarcipher.GuiMain" />
     <module name="CaesarCipher" />
     <option name="VM_PARAMETERS" value="-Dorg.slf4j.simpleLogger.defaultLogLevel=error" />
     <extension name="coverage">

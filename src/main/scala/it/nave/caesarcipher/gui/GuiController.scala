@@ -17,26 +17,36 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package it.nave.caesarcipher
+package it.nave.caesarcipher.gui
 
 import akka.actor.typed.ActorSystem
 import it.nave.caesarcipher.actor.Guardian
 import it.nave.caesarcipher.actor.Guardian.InputString
-import it.nave.caesarcipher.gui.PrintlnDisplayer
+import scalafx.event.ActionEvent
+import scalafx.scene.control.TextField
+import scalafxml.core.macros.sfxml
 
-import scala.io.StdIn
+@sfxml
+class GuiController(private val input: TextField,
+                    private val output: TextField) {
 
-object Main extends App {
+  def encrypt(event: ActionEvent): Unit = {
+    setUpEnvironment(Guardian.ENCRYPT, input.text(), output)
+  }
 
-  val ENCRYPT_CHOICE = "1"
-  val DECRYPT_CHOICE = "2"
+  def decrypt(event: ActionEvent): Unit = {
+    setUpEnvironment(Guardian.DECRYPT, output.text(), input)
+  }
 
-  val response = StdIn.readLine(s"############## WELCOME TO CAESER CIPHER AKKA BASED ##############\nPress ($ENCRYPT_CHOICE) to encrypt or ($DECRYPT_CHOICE) to decrypt: ")
-  if (ENCRYPT_CHOICE == response || DECRYPT_CHOICE == response) {
-    val inputStr = StdIn.readLine("Insert a string to elaborate: ")
-    ActorSystem(Guardian(ENCRYPT_CHOICE == response, new PrintlnDisplayer), "GuardianActor") ! InputString(inputStr)
-  } else {
-    println(s""" "$response" is not a valid choice """.trim)
+  def clean(event: ActionEvent): Unit = {
+    input.text.value = ""
+    output.text.value = ""
+  }
+
+  private def setUpEnvironment(encrypt: Boolean, inputStr: String, outputTextField: TextField): Unit = {
+    if (!inputStr.isBlank) {
+      ActorSystem(Guardian(encrypt, new TextFieldDisplayer(outputTextField)), "GuardianActor") ! InputString(inputStr)
+    }
   }
 
 }

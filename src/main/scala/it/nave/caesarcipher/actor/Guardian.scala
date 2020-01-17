@@ -26,6 +26,9 @@ import it.nave.caesarcipher.gui.OutputDisplayer
 
 object Guardian {
 
+  val ENCRYPT = true
+  val DECRYPT = false
+
   trait GuardianMessage
 
   final case class InputString(str: String) extends GuardianMessage

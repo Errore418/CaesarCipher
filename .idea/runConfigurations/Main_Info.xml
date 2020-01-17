@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Main_Info" type="Application" factoryName="Application">
-    <option name="MAIN_CLASS_NAME" value="it.nave.caesarcipher.Main" />
+    <option name="MAIN_CLASS_NAME" value="it.nave.caesarcipher.GuiMain" />
     <module name="CaesarCipher" />
     <extension name="coverage">
       <pattern>
