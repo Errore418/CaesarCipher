@@ -1,17 +1,116 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.nave.caesarcipher.gui.GuiController">
-    <Button layoutX="35.0" layoutY="274.0" mnemonicParsing="false" onAction="#encrypt" prefHeight="65.0" prefWidth="115.0" text="Cifra" />
-    <Label layoutX="58.0" layoutY="115.0" text="Messaggio in chiaro" />
-    <Label layoutX="58.0" layoutY="184.0" text="Messaggio cifrato" />
-    <TextField fx:id="input" layoutX="337.0" layoutY="110.0" />
-    <TextField fx:id="output" layoutX="337.0" layoutY="179.0" />
-    <Button layoutX="243.0" layoutY="274.0" mnemonicParsing="false" onAction="#decrypt" prefHeight="65.0" prefWidth="115.0" text="Decifra" />
-    <Label layoutX="256.0" layoutY="28.0" text="CaesarCipher" />
-   <Button layoutX="451.0" layoutY="274.0" mnemonicParsing="false" onAction="#clean" prefHeight="65.0" prefWidth="115.0" text="Pulisci" />
-</AnchorPane>
+<ScrollPane fitToHeight="true" fitToWidth="true" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.nave.caesarcipher.gui.GuiController">
+    <GridPane hgap="20.0" prefHeight="350.0" prefWidth="650.0" vgap="20.0">
+        <columnConstraints>
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
+         <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+        </rowConstraints>
+        <padding>
+            <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+        </padding>
+        <Label minHeight="20.0" minWidth="116.0" text="Plain message">
+            <font>
+                <Font size="16.0" />
+            </font>
+        </Label>
+        <TextField fx:id="input" minHeight="29.0" minWidth="200.0" promptText="Message to encrypt" GridPane.columnIndex="1" GridPane.columnSpan="4">
+            <font>
+                <Font size="15.0" />
+            </font>
+        </TextField>
+        <Label minHeight="20.0" minWidth="159.0" text="Encrypted message" GridPane.rowIndex="2">
+            <font>
+                <Font size="16.0" />
+            </font>
+        </Label>
+        <TextField fx:id="output" minHeight="29.0" minWidth="200.0" promptText="Message to decrypt" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.rowIndex="2">
+            <font>
+                <Font size="15.0" />
+            </font>
+        </TextField>
+        <Button minHeight="65.0" minWidth="60.0" mnemonicParsing="false" onAction="#encrypt" prefHeight="80.0" prefWidth="80.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <graphic>
+                <ImageView pickOnBounds="true" preserveRatio="true" smooth="false">
+                    <Image url="@images/arrow_down.png" />
+                </ImageView>
+            </graphic>
+            <tooltip>
+                <Tooltip text="Encrypt message">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </Tooltip>
+            </tooltip>
+        </Button>
+        <Button minHeight="65.0" minWidth="60.0" mnemonicParsing="false" onAction="#decrypt" prefHeight="80.0" prefWidth="80.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+            <graphic>
+                <ImageView pickOnBounds="true" preserveRatio="true">
+                    <Image url="@images/arrow_up.png" />
+                </ImageView>
+            </graphic>
+            <tooltip>
+                <Tooltip text="Decrypt message">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </Tooltip>
+            </tooltip>
+        </Button>
+        <Button minHeight="65.0" minWidth="60.0" mnemonicParsing="false" onAction="#clean" prefHeight="80.0" prefWidth="80.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
+            <graphic>
+                <ImageView pickOnBounds="true" preserveRatio="true">
+                    <Image url="@images/trash.png" />
+                </ImageView>
+            </graphic>
+            <GridPane.margin>
+                <Insets />
+            </GridPane.margin>
+            <tooltip>
+                <Tooltip text="Clean all textfields">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </Tooltip>
+            </tooltip>
+        </Button>
+        <Button minHeight="65.0" minWidth="60.0" mnemonicParsing="false" onAction="#info" prefHeight="80.0" prefWidth="80.0" GridPane.columnIndex="4" GridPane.rowIndex="1">
+            <graphic>
+                <ImageView pickOnBounds="true" preserveRatio="true">
+                    <Image url="@images/info.png" />
+                </ImageView>
+            </graphic>
+            <GridPane.margin>
+                <Insets />
+            </GridPane.margin>
+            <tooltip>
+                <Tooltip text="About">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </Tooltip>
+            </tooltip>
+        </Button>
+    </GridPane>
+</ScrollPane>

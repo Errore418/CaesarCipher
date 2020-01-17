@@ -23,11 +23,13 @@ import scalafx.Includes._
 import scalafx.application.JFXApp
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.scene.Scene
+import scalafx.scene.image.Image
 import scalafxml.core.{FXMLView, NoDependencyResolver}
 
 object GuiMain extends JFXApp {
   stage = new PrimaryStage() {
-    title = "FXML GridPane Demo"
+    title = "CaesarCipher"
     scene = new Scene(FXMLView(getClass getResource "/gui.fxml", NoDependencyResolver))
+    icons.add(new Image(getClass.getResourceAsStream("/images/caesar.png")))
   }
 }
