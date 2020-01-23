@@ -30,6 +30,6 @@ object GuiMain extends JFXApp {
   stage = new PrimaryStage() {
     title = "CaesarCipher"
     scene = new Scene(FXMLView(getClass getResource "/gui.fxml", NoDependencyResolver))
-    icons.add(new Image(getClass.getResourceAsStream("/images/caesar.png")))
+    icons add new Image(getClass.getResourceAsStream("/images/caesar.png"))
   }
 }

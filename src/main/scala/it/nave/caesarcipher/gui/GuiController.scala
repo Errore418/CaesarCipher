@@ -24,8 +24,7 @@ import it.nave.caesarcipher.actor.Guardian
 import it.nave.caesarcipher.actor.Guardian.InputString
 import scalafx.event.ActionEvent
 import scalafx.scene.control.Alert.AlertType
-import scalafx.scene.control.{Alert, ButtonType, TextArea, TextField}
-import scalafx.scene.input.KeyCode.C
+import scalafx.scene.control.{Alert, TextArea, TextField}
 import scalafxml.core.macros.sfxml
 
 @sfxml
@@ -33,11 +32,11 @@ class GuiController(private val input: TextField,
                     private val output: TextField) {
 
   def encrypt(event: ActionEvent): Unit = {
-    setUpEnvironment(Guardian.ENCRYPT, input.text(), output)
+    setUpEnvironment(Guardian.ENCRYPT, input.text().trim, output)
   }
 
   def decrypt(event: ActionEvent): Unit = {
-    setUpEnvironment(Guardian.DECRYPT, output.text(), input)
+    setUpEnvironment(Guardian.DECRYPT, output.text().trim, input)
   }
 
   def clean(event: ActionEvent): Unit = {
