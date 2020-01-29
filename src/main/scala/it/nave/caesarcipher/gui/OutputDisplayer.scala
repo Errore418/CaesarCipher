@@ -19,6 +19,14 @@
 
 package it.nave.caesarcipher.gui
 
+/**
+ * Trait che astrae la funzione di mostrare una stringa all'utente.
+ */
 trait OutputDisplayer {
+  /**
+   * Metodo per mostrare una stringa all'utente.
+   *
+   * @param output la stringa da mostrare
+   */
   def display(output: String): Unit
 }

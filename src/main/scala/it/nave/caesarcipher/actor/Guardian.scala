@@ -24,20 +24,55 @@ import akka.actor.typed.{ActorRef, Behavior}
 import it.nave.caesarcipher.actor.CharActor.{CharShift, LinkCharActor}
 import it.nave.caesarcipher.gui.OutputDisplayer
 
+/**
+ * Object contenente metodi utili alla creazione dell'attore guardiano.
+ */
 object Guardian {
 
   val ENCRYPT = true
   val DECRYPT = false
 
+  /**
+   * Trait base per i messaggi.
+   */
   trait GuardianMessage
 
+  /**
+   * Messaggio contenente la stringa da elaborare.
+   *
+   * @param str la stringa da elaborare
+   */
   final case class InputString(str: String) extends GuardianMessage
 
+  /**
+   * Messaggio contenente il carattere elaborato e il suo relativo indice.
+   *
+   * @param char  il carattere elaborato
+   * @param index l'indice del carattere elaborato
+   */
   final case class ResultChar(char: Char, index: Int) extends GuardianMessage
 
-  private val ALPHABETS = List("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", "0123456789")
-  private val SHIFT = 3
+  /**
+   * Lista degli alfabeti supportati dal cifrario..
+   */
+  val ALPHABETS = List("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", "0123456789")
 
+  /**
+   * Numero di spostamenti a cui sottoporre i caratteri.
+   */
+  val SHIFT = 3
+
+  /**
+   * Metodo per configurare gli attori dei singoli caratteri e per costruire un [[akka.actor.typed.Behavior Behavior]]
+   * per aspettare il messaggio [[it.nave.caesarcipher.actor.Guardian.InputString InputString]]. Per ogni carattere
+   * della stringa di input viene mandato un [[it.nave.caesarcipher.actor.CharActor.CharShift CharShift]] all'attore
+   * corrispondente, mentre per quelli non presenti in nessun alfabeto viene inoltrato un
+   * [[it.nave.caesarcipher.actor.Guardian.ResultChar ResultChar]] a se stessi.
+   *
+   * @param encrypt   specifica se gli attori vanno configurati per criptare (true) o per decriptare (false)
+   * @param displayer [[it.nave.caesarcipher.gui.OutputDisplayer]] a cui inoltrare la stringa elaborata per mostrarla all'utente
+   * @return il [[akka.actor.typed.Behavior Behavior]] da usare per il prossimo messaggio
+   */
   def apply(encrypt: Boolean, displayer: OutputDisplayer): Behavior[GuardianMessage] = Behaviors.setup { context =>
     context.log.info(s"Guardian actor started in ${if (encrypt) "encrypt" else "decrypt"} mode")
     val charActors = setUpCharActors(context, encrypt)
@@ -51,7 +86,15 @@ object Guardian {
     }
   }
 
-  private def setUpCharActors(context: ActorContext[GuardianMessage], encrypt: Boolean): Map[Char, ActorRef[CharActor.CharMessage]] = {
+  /**
+   * Per ogni cattere di ogni alfabeto supportato crea un attore sfruttando il [[akka.actor.typed.Behavior Behavior]]
+   * restituito dal metodo [[it.nave.caesarcipher.actor.CharActor#apply(char) CharActor#apply(char)]].
+   *
+   * @param context [[akka.actor.typed.scaladsl.ActorContext ActorContext]] dell'ambiente di esecuzione dell'attore
+   * @param encrypt specifica se gli attori vanno configurati per criptare (true) o per decriptare (false)
+   * @return mappa degli attori creati indicizzati per il loro carattere associato
+   */
+  def setUpCharActors(context: ActorContext[GuardianMessage], encrypt: Boolean): Map[Char, ActorRef[CharActor.CharMessage]] = {
     context.log.info(s"Setting up alphabets $ALPHABETS")
     val charActors = ALPHABETS
       .flatten
@@ -62,7 +105,16 @@ object Guardian {
     charActors
   }
 
-  private def linkCharActors(context: ActorContext[GuardianMessage], charActors: Map[Char, ActorRef[CharActor.CharMessage]], encrypt: Boolean): Unit = {
+  /**
+   * Ad ogni CharActor viene mandato un [[it.nave.caesarcipher.actor.CharActor.LinkCharActor LinkCharActor]] contenente
+   * l'attore del prossimo carattere nell'alfabeto e il guardiano stesso. In caso di decriptaggio gli alfabeti vengono
+   * invertiti, così che il prossimo carattere sia in realtà il precedente in ordine alfabetico.
+   *
+   * @param context    [[akka.actor.typed.scaladsl.ActorContext ActorContext]] dell'ambiente di esecuzione dell'attore
+   * @param charActors mappa degli attori creati indicizzati per il loro carattere associato
+   * @param encrypt    specifica se gli attori vanno configurati per criptare (true) o per decriptare (false)
+   */
+  def linkCharActors(context: ActorContext[GuardianMessage], charActors: Map[Char, ActorRef[CharActor.CharMessage]], encrypt: Boolean): Unit = {
     for (entry <- charActors) {
       ALPHABETS
         .find(_.contains(entry._1))
@@ -75,7 +127,19 @@ object Guardian {
     }
   }
 
-  private def apply(count: Int, listOfChars: List[(Int, Char)], displayer: OutputDisplayer): Behavior[GuardianMessage] = Behaviors.receive { (context, message) =>
+  /**
+   * Metodo per costruire un [[akka.actor.typed.Behavior Behavior]] per aspettare i messaggi
+   * [[it.nave.caesarcipher.actor.Guardian.ResultChar ResultChar]]. I caratteri elaborati ricevuti vengono caricati in
+   * un apposito buffer. Dopo aver ricevuto un numero di caratteri pari alla lunghezza della stringa di input
+   * il buffer viene usato per ricostruire la stringa di output, che viene inoltrata al displayer per mostrarla
+   * all'utente.
+   *
+   * @param count       numero di caratteri ancora attesii
+   * @param listOfChars buffer con i caratteri elaborati e la loro relativa posizione
+   * @param displayer   [[it.nave.caesarcipher.gui.OutputDisplayer]] a cui inoltrare la stringa elaborata per mostrarla all'utente
+   * @return il [[akka.actor.typed.Behavior Behavior]] da usare per il prossimo messaggio
+   */
+  def apply(count: Int, listOfChars: List[(Int, Char)], displayer: OutputDisplayer): Behavior[GuardianMessage] = Behaviors.receive { (context, message) =>
     context.log.debug("Guardian actor: received message {}", message)
     context.log.debug("Map of chars: {}", listOfChars)
     context.log.debug("Count: {}", count)

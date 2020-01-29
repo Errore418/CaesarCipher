@@ -19,6 +19,10 @@
 
 package it.nave.caesarcipher.gui
 
+/**
+ * Un'implementazione di [[it.nave.caesarcipher.gui.OutputDisplayer OutputDisplayer]] che sfrutta la stampa su terminale
+ * tramite il metodo [[scala.Predef#println println]].
+ */
 class PrintlnDisplayer extends OutputDisplayer {
   override def display(output: String): Unit = {
     println(s"Output string: $output")

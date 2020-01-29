@@ -27,23 +27,52 @@ import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.control.{Alert, TextArea, TextField}
 import scalafxml.core.macros.sfxml
 
+/**
+ * Classe che viene associata a un file fxml e sovrintende l’esecuzione della rispettiva schermata.
+ * Riceve in costruzione gli oggetti grafici che presentano id coincidenti con i nomi dei parametri ed espone metodi che
+ * possono venire invocati a seguito di particolari eventi nella schermata (es. click di un bottone).
+ *
+ * @param input  [[scalafx.scene.control.TextField TextField]] contenente testo da criptare
+ * @param output [[scalafx.scene.control.TextField TextField]] contentente testo da decriptare
+ */
 @sfxml
 class GuiController(private val input: TextField,
                     private val output: TextField) {
 
+  /**
+   * Metodo invocato al click del bottone per criptare.
+   *
+   * @param event l'evento lanciato
+   */
   def encrypt(event: ActionEvent): Unit = {
     setUpEnvironment(Guardian.ENCRYPT, input.text().trim, output)
   }
 
+  /**
+   * Metodo invocato al click del bottone per decriptare.
+   *
+   * @param event l'evento lanciato
+   */
   def decrypt(event: ActionEvent): Unit = {
     setUpEnvironment(Guardian.DECRYPT, output.text().trim, input)
   }
 
+  /**
+   * Metodo invocato al click del bottone per pulire i campi.
+   *
+   * @param event l'evento lanciato
+   */
   def clean(event: ActionEvent): Unit = {
     input.text.value = ""
     output.text.value = ""
   }
 
+  /**
+   * Metodo invocato al click del bottone per la schermata di about.
+   * Setta e mostra un [[scalafx.scene.control.Alert Alert]] con il testo della licenza.
+   *
+   * @param event l'evento lanciato
+   */
   def info(event: ActionEvent): Unit = {
     val alert = new Alert(AlertType.Information)
     alert.title = "About"
@@ -64,7 +93,16 @@ class GuiController(private val input: TextField,
     alert.show()
   }
 
-  private def setUpEnvironment(encrypt: Boolean, inputStr: String, outputTextField: TextField): Unit = {
+  /**
+   * Metodo per far partire l'ambiente di Akka e criptare/decriptare un testo.
+   * Dopo aver fatto fatto partire l'attore [[it.nave.caesarcipher.actor.Guardian Guardian]] con i parametri specificati
+   * gli invia un messaggio con la stringa di input.
+   *
+   * @param encrypt         specifica se l'ambiente va avviato per criptare (true) o per decriptare (false)
+   * @param inputStr        la stringa da criptare/descriptare
+   * @param outputTextField TextField su cui mostrare il risultato dell'elaborazione
+   */
+  def setUpEnvironment(encrypt: Boolean, inputStr: String, outputTextField: TextField): Unit = {
     if (!inputStr.isEmpty) {
       ActorSystem(Guardian(encrypt, new TextFieldDisplayer(outputTextField)), "GuardianActor") ! InputString(inputStr)
     }

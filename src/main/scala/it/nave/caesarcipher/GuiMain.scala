@@ -26,10 +26,15 @@ import scalafx.scene.Scene
 import scalafx.scene.image.Image
 import scalafxml.core.{FXMLView, NoDependencyResolver}
 
+/**
+ * Classe di partenza del programma.
+ * Estende [[scalafx.application.JFXApp JFXApp]], un trait di ScalaFX utile ad avviare il flusso di JavaFX e
+ * specificarne la prima schermata.
+ */
 object GuiMain extends JFXApp {
   stage = new PrimaryStage() {
     title = "CaesarCipher"
     scene = new Scene(FXMLView(getClass getResource "/gui.fxml", NoDependencyResolver))
-    icons add new Image(getClass.getResourceAsStream("/images/caesar.png"))
+    icons add new Image(getClass getResourceAsStream "/images/caesar.png")
   }
 }

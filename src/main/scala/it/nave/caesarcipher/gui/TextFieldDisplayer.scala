@@ -21,6 +21,12 @@ package it.nave.caesarcipher.gui
 
 import scalafx.scene.control.TextField
 
+/**
+ * Un'implementazione di [[it.nave.caesarcipher.gui.OutputDisplayer OutputDisplayer]] che usa una
+ * [[scalafx.scene.control.TextField TextField]] per mostrare la stringa.
+ *
+ * @param outputTextField la casella di testo in cui mostrare la stringa
+ */
 class TextFieldDisplayer(private val outputTextField: TextField) extends OutputDisplayer {
   override def display(output: String): Unit = {
     outputTextField.text.value = output
